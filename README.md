@@ -1,5 +1,5 @@
 # Customizable Smartphone stand / charging holder
-*3D printable desk stand for smartphones and tablets*
+*3D printable desk stand for smartphones and tablets (formerly thing:2847921)*
 
 ### License
 [Creative Commons - Attribution](https://creativecommons.org/licenses/by/4.0/)

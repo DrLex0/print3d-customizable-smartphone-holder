@@ -60,6 +60,23 @@
             "usbHole": "yes",
             "wallMount": "no",
             "width": "60"
+        },
+        "MyModel-OnePNord-front": {
+            "anchorSupport": "yes",
+            "frontGap": "yes",
+            "frontGapSupport": "yes",
+            "frontHole": "no",
+            "lift": "50",
+            "preview": "no",
+            "rearHole": "yes",
+            "rearLip": "22",
+            "rearSlots": "yes",
+            "suppGap": "0.2",
+            "testPiece": "no",
+            "thick": "11.1",
+            "usbHole": "no",
+            "wallMount": "no",
+            "width": "60"
         }
     }
 }

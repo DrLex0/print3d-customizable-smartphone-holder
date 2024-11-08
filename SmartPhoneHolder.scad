@@ -1,12 +1,13 @@
-// Smartphone Stand by DrLex, 2018/04 - 2019/07
+// Smartphone Stand by DrLex, 2018/04 - 2024/11
 // Released under Creative Commons - Attribution license
+// Version 2.1
 
 // Thickness of your phone. Depending on the shape, you may need to add some extra margin.
 thick = 12.0; //[3.0:0.1:25.0]
 // How high to raise the phone from the surface. This should be high enough if you want to be able to plug in a USB cable.
 lift = 40; //[10.0:0.5:60.0]
 // Width of the holder.
-width = 60.0; //[5:0.5:100.0]
+width = 60.0; //[5:0.5:120.0]
 // Length of the lip at the rear.
 rearLip = 15; //[5:0.5:60]
 // Enable slots in the rear (to reduce material, route cables, or just for the looks). Only if width is at least 34.
@@ -19,8 +20,10 @@ usbHole = "no"; //[yes,no]
 frontHole = "no"; //[yes,no]
 // Create a cable hole in the bottom rear.
 rearHole = "no"; //[yes,no]
-// Create a gap in the front for easier cable routing (overrides frontHole and usbHole, requires thick >= 9). A support will be included that must be broken away after printing. Some sanding may be needed for a nice result.
+// Create a gap in the front for easier cable routing (overrides frontHole and usbHole, requires thick >= 9).
 frontGap = "no"; //[yes,no]
+// Include a support with frontGap that will likely be much more efficient than auto-generated supports. It must be broken away after printing; some sanding may be needed for a nice result.
+frontGapSupport = "yes"; //[yes,no]
 
 // Enable this and set width to 5 to print a quick test slice to see whether your phone fits well. (Rounded corners and holes will be omitted.)
 testPiece = "no"; //[yes,no]
@@ -30,19 +33,24 @@ preview = "no"; //[yes,no]
 
 /* [Advanced] */
 // When using frontGap, leave this much of a gap between the built-in support and the actual object.
-suppGap = 0.2; //[0.1:0.01:0.4]
+suppGap = 0.2; //[0.1:0.01:0.5]
+
+// Connect the support at the bottom with small blocks. Makes it harder to remove and may require some clean-up, but reduces risk of the print being ruined by the support breaking loose.
+anchorSupport = "no"; //[yes,no]
 
 
 /* [Hidden] */
 // Unlike the OpenSCAD customizer, the Thingiverse customizer does not support simple checkboxes, hence this kludge.
+bPreview   = (preview == "yes");
 bRearSlots = (rearSlots == "yes");
 bWallMount = (wallMount == "yes");
 bUsbHole   = (usbHole == "yes" || frontGap == "yes") && thick >= 8.8;
 bFrontHole = (frontHole == "yes");
 bRearHole  = (rearHole == "yes");
-bFrontGap  = (frontGap == "yes" && thick >= 8.8);
+bFrontGap  = (frontGap == "yes" && thick >= 8.8 && width >= 18);
+bFrontGapS = (frontGapSupport == "yes" || bPreview);
+bAnchor    = (anchorSupport == "yes" && bFrontGap && bFrontGapS);
 bTestPiece = (testPiece == "yes");
-bPreview   = (preview == "yes");
 
 rear = rearLip + 14.495;
 ox = thick * cos(10);
@@ -56,7 +64,8 @@ rearSlot3 = lift >= 53 ? rearSlot1 - 21.5 : 0.0;
 rotation = bPreview ? [90, 0, 90] : [0, 0, 90];
 shift = bPreview ? [-width/2, 0, 0] : [lift/2 + 10, 0, 0];
 
-translate(shift) rotate(rotation) difference() {
+translate(shift) rotate(rotation) {
+  difference() {
     linear_extrude(width, convexity=10) extrusionProfile();
 
     if(! bTestPiece) {
@@ -73,8 +82,8 @@ translate(shift) rotate(rotation) difference() {
                 translate([13.495, rearSlot3, width/2]) rotate([0, 90, 0]) stretchCylinder(7, width - 20, 5);
         }
 
-        if(bUsbHole && thick >= 8.8) {
-            translate([(-0.982058 + 0.725908 - ox)/2, (lift - 0.30121 + lift2)/2, width/2]) rotate([100,90,0]) smoothCube(14.8, 9, 5);
+        if(bUsbHole && thick >= 8.8 && width >= 24) {
+            translate([(-0.982058 + 0.725908 - ox)/2, (lift - 0.30121 + lift2)/2, width/2]) rotate([100,90,0]) smoothCube(18.8, 9, 5, 1.5);
         }
 
         // Extra fanciness has been added to reduce the need for supports. You still need good cooling and print at thin layers to avoid making a mess, though. Or, simply cut away the mess after printing.
@@ -84,11 +93,13 @@ translate(shift) rotate(rotation) difference() {
                     translate([-9, -0.49, 0]) rotate([90, 0, 0]) stretchCylinder(7.4, 30, 5);
                     translate([-28, -4, -8]) cube([25, 7, 16]);
                 }
-                if(bPreview) {
+                if(bPreview || ! bFrontGapS) {
+                    // Remove the whole thing
                     translate([-10, -2, -7.4]) rotate([0,0,-10]) cube([7.6, lift+20, 14.8]);
                     translate([0, lift-2, -7.4]) rotate([0,0,-10]) cube([thick/2, 20, 14.8]);
                 }
                 else {
+                    // Surgically remove only what needs to become a gap
                     translate([-10, -2, 7.4-suppGap]) rotate([0,0,-10]) cube([7.6, lift+20, suppGap]);
                     translate([0, lift-2, 7.4-suppGap]) rotate([0,0,-10]) cube([thick/2, 20, suppGap]);
                     translate([-10, -2, -7.4]) rotate([0,0,-10]) cube([7.6, lift+20, suppGap]);
@@ -108,14 +119,11 @@ translate(shift) rotate(rotation) difference() {
         }
 
         if(bRearHole) {
-            difference() {
-                translate([13.495, -0.49, width/2]) rotate([90, 0, 0]) stretchCylinder(7.4, 22, 5);
-                translate([13.495, 0, width/2-7.4]) cube([2.0, 10, .8], center=true);
-                translate([13.495, 0, width/2+7.4]) cube([2.0, 10, .8], center=true);
+            translate([13.495, 0, width/2]) rotate([90, 0, 0]) stretchCylinder(7.4, 22, 5);
+            translate([13.495, 0, width/2]) rotate([90, 0, 90]) difference() {
+                stretchCylinder(7.8, 22, 6);
+                translate([-7.95, 0, 0]) cube(20, center=true);
             }
-            translate([13.495, 0, width/2]) rotate([90, 0, 90]) stretchCylinder(7, 21, 8);
-            translate([11.495, 0, width/2]) cube([2, 10, 14.8], center=true);
-            translate([15.495, 0, width/2]) cube([2, 10, 14.8], center=true);
         }
 
 //        if(bFrontHole) {
@@ -130,6 +138,14 @@ translate(shift) rotate(rotation) difference() {
             translate([14.495, -5, -5]) cube([rearLip+1, 12, width+10]);
         }
     }
+  }
+
+  if(bAnchor && ! (bTestPiece || bPreview)) {
+      translate([-ox2, 0, width/2]) rotate([0,0,-9.95]) {
+          translate([-7.8, lift+6.5, -7.2]) cube([1.2, 2.4, 1], center=true);
+          translate([-5.3, 1.2, -7.2]) rotate([0,0,68]) cube([1.2, 2.4, 1], center=true);
+      }
+  }
 }
 
 
@@ -140,10 +156,10 @@ module cornerCutter() {
     }
 }
 
-module smoothCube(w, d, ht) {
+module smoothCube(w, d, ht, rad=1) {
     minkowski() {
-        cube([w-2, d-2, ht-1], center=true);
-        cylinder(r=1, h=1, $fn=20);
+        cube([w-2*rad, d-2*rad, ht-1], center=true);
+        cylinder(r=rad, h=1, $fn=20);
     }
 }
 

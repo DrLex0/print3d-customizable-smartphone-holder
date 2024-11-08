@@ -1,0 +1,65 @@
+{
+    "fileFormatVersion": "1",
+    "parameterSets": {
+        "MyModel-Honor7-front": {
+            "frontGap": "yes",
+            "frontHole": "no",
+            "lift": "40",
+            "preview": "no",
+            "rearHole": "yes",
+            "rearLip": "18",
+            "rearSlots": "yes",
+            "suppGap": "0.2",
+            "testPiece": "no",
+            "thick": "13",
+            "usbHole": "no",
+            "wallMount": "no",
+            "width": "60"
+        },
+        "Mini": {
+            "frontGap": "no",
+            "frontHole": "no",
+            "lift": "42",
+            "preview": "no",
+            "rearHole": "yes",
+            "rearLip": "18",
+            "rearSlots": "yes",
+            "suppGap": "0.2",
+            "testPiece": "no",
+            "thick": "11.5",
+            "usbHole": "yes",
+            "wallMount": "no",
+            "width": "34"
+        },
+        "WallMount": {
+            "frontGap": "no",
+            "frontHole": "yes",
+            "lift": "34",
+            "preview": "no",
+            "rearHole": "no",
+            "rearLip": "15",
+            "rearSlots": "yes",
+            "suppGap": "0.2",
+            "testPiece": "no",
+            "thick": "12",
+            "usbHole": "yes",
+            "wallMount": "yes",
+            "width": "60"
+        },
+        "MyModel-Honor7": {
+            "frontGap": "no",
+            "frontHole": "yes",
+            "lift": "40",
+            "preview": "no",
+            "rearHole": "yes",
+            "rearLip": "18",
+            "rearSlots": "yes",
+            "suppGap": "0.2",
+            "testPiece": "no",
+            "thick": "13",
+            "usbHole": "yes",
+            "wallMount": "no",
+            "width": "60"
+        }
+    }
+}
